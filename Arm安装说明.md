@@ -1,70 +1,43 @@
-# Ark
+# nvjdc
+
+## 提示
+
+由于我自己的环境是 Ubuntu 20.04.3 LTS
 
 
-## 注意 注意注意
-
-    防狗乱咬
 
 
-    防止泛滥没有许可 用不了 许可免费
-
-
-## Windows安装教程
-
-
-# 1安装ASP.NET Core Runtime 5.0.12
-
-安装地址:https://dotnet.microsoft.com/download/dotnet/5.0
-下载之后无脑下一步
-
-# 2下载当前项目源码解压
-
-# 3删除NETJDC.deps.json
-
-
-# 4根据自己系统将dll复制根目录即可
-
-64位
-
-复制runtimes\win-x64\native\OpenCvSharpExtern.dll到根目录
-
-32位
-
-复制runtimes\win-x86\native\OpenCvSharpExtern.dll到根目录
-
-# 启动 
-
- 管理员打开CMD CD到源码文件夹中  输入 dotnet NETJDC.dll --urls=http://*:5000
-
- 后面那个是端口可以自己改
-
-## docker安装教程
-
-
+## Arm安装教程
 
 1拉源码
 国内
 ```
-git clone https://github.com/NNNNolan/Ark.git /root/Ark
+git clone https://ghproxy.com/https://github.com/NolanHzy/nvjdcdocker.git /root/Ark
 ```
 国外
 ```
-git clone https://github.com/NNNNolan/Ark.git /root/Ark
+git clone https://github.com/NolanHzy/nvjdcdocker.git /root/Ark
 ```
 
 
-2 拉取基础镜像以后不需要拉取镜像了 如果需要拉取我会通知
+2 拉取基础镜像
 ```
-sudo docker pull nolanhzy/ark:latest
-```
-
-3 执行命令
-
-```
-yum install wget unzip -y
+sudo docker pull nolanhzy/nvjdccaptcha:arm   
 ```
 
-4创建一个目录放配置
+3 执行启动基础镜像
+
+```
+sudo docker run   --name nvjdccaptcha -p 5703:5000  --restart=always  -d   -it --privileged=true  nolanhzy/nvjdccaptcha:arm   
+```
+
+4 执行命令安装浏览器
+
+```
+sudo apt-get install  chromium-browser
+```
+
+5创建一个目录放配置
 
 ```
  cd /root/Ark
@@ -73,7 +46,7 @@ yum install wget unzip -y
 mkdir -p  Config && cd Config
 ```
 
-5手动建立Config.json 配置文件 
+6手动建立Config.json 配置文件 
 注意ARM多一个配置 Captchaurl
 
 ```
@@ -84,11 +57,9 @@ mkdir -p  Config && cd Config
   "Title": "Ark",
   //回收时间分钟 不填默认3分钟
   "Closetime": "5",
-  //不要修改
-  "Captchaurl": "http://127.0.0.1:5000",
   //网站公告
   "Announcement": "为提高账户的安全性，请关闭免密支付。",
-  //Proxy 支持不带密码的socks5 以及http 
+   //Proxy 支持不带密码的socks5 以及http 
   ///http  Proxy 只需要填写 ip:端口
   /// Socks5 需要填写socks5://ip:端口 不能填写下方账户密码
   "Proxy": "",
@@ -96,10 +67,12 @@ mkdir -p  Config && cd Config
   "ProxyUser": "",
   //Proxy密码
   "ProxyPass": "",
+  //Opencv镜像地址  刚刚镜像的地址
+  "Captchaurl": "http://127.0.0.1:5703",
   ///开启打印等待日志卡短信验证登陆 可开启 拿到日志群里回复 默认不要填写
   "Debug": "",
   ///自动滑块次数5次 5次后手动滑块 可设置为0默认手动滑块
-  "AutoCaptchaCount": "5",
+  "AutoCaptchaCount": "0",
   ///XDD PLUS Url  http://IP地址:端口/api/login/smslogin
   "XDDurl": "",
   ///xddToken
@@ -116,7 +89,7 @@ mkdir -p  Config && cd Config
   "WP_APP_TOKEN": "",
   "MainWP_UID": "",
   // ======================================= pushplus 通知设置区域 ===========================================
-  ///Push Plus官方网站：http" //www.pushplus.plus  只有青龙模式有用
+  ///Push Plus官方网站：http: //www.pushplus.plus  只有青龙模式有用
   ///下方填写您的Token，微信扫码登录后一对一推送或一对多推送下面的token，只填" "PUSH_PLUS_TOKEN",
   "PUSH_PLUS_TOKEN": "",
   //下方填写您的一对多推送的 "群组编码" ，（一对多推送下面->您的群组(如无则新建)->群组编码）
@@ -144,98 +117,77 @@ mkdir -p  Config && cd Config
 }
 ```
 
-6 回到Ark目录创建chromium文件夹并进入
 
+7 安装Gdip
 ```
-cd /root/Ark && mkdir -p  .local-chromium/Linux-884014 && cd .local-chromium/Linux-884014
-```
-
-7下载 chromium 
-
-```
-wget https://mirrors.huaweicloud.com/chromium-browser-snapshots/Linux_x64/884014/chrome-linux.zip && unzip chrome-linux.zip
-```
-
-8删除刚刚下载的压缩包 
-
-```
-rm  -f chrome-linux.zip
-```
-
-9回到刚刚创建的目录
-
-```
-cd  /root/Ark
+apt install libgdiplus -y && ln -s /usr/lib/libgdiplus.so /usr/lib/gdiplus.dll
 ```
 
 
-
-10启动镜像
-
-
-注意 5000端口可以不开外网端口
+8 回到的目录 下载NET5.sh
 ```
-sudo docker run   --name ark -p 5701:80 -p 5000:5000 -d  -v  "$(pwd)":/app/Ark \
--v /etc/localtime:/etc/localtime:ro \
--it --privileged=true  nolanhzy/ark:latest
+ cd /root/Ark
 ```
-注意由于我懒 不想更新镜像 /etc/localtime
-
-
-那么群辉启动docker 就删除掉 -v /etc/localtime:/etc/localtime:ro \
-
-由于有定时任务 需要设置 时区 假设群辉拉的源码在 /volume1/docker/nvjdc 目录
 ```
-sudo docker run   --name ark -p 5701:80 -d  -v  /volume1/docker/nvjdc:/app \
--it --privileged=true  nolanhzy/ark:latest
-```
-进入容器
-```
-docker exec -it ark bash
-```
-修改时间
-```
-cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-```
-输入date 查看时区对不对  群辉的docker 日志时间有毛病 我们就不用管docker log
-```
-date
+wget https://dot.net/v1/dotnet-install.sh
 ```
 
-这里可能群辉没有
-
-11查看 日志 
+9 设置权限
 
 ```
-docker logs -f ark 
+chmod 777 dotnet-install.sh
 ```
 
-  
+10 下载NET5
 
-出现 NETJDC  started 即可 
+```
+./dotnet-install.sh -c 5.0
+```
 
-## Arm安装教程
+11 设置 path
 
+```
+export PATH="$PATH:$HOME/.dotnet"
+```
 
-
-
-
-
-
+12 启动
+ 
+```
+nohup dotnet NETJDC.dll --urls=http://*:5701 1>"$(pwd)"/log 2>&1 & #ARM64
+```
+12 由于多了定时任务 根据自己的环境设置时区 这里就不多说了 自己百度设置成北京时间即可
 
 ## 更新
+
+查询占用5701的端口进程  如果你的nvjdc是5701就查询 5701
+```
+netstat -lnp|grep 5701
+```
+假如显示如下内容
+tcp6       0      0 :::5701                 :::*                    LISTEN      680536/dotnet  
+
+杀死进程
+```
+kill -9 680536
+```
 
 ```
 cd /root/Ark
 ```
-```
-docker stop ark
-```
+
 ```
 git pull
 ```
+
+
 ```
-docker start ark
+export PATH="$PATH:$HOME/.dotnet"
+```
+
+
+```
+nohup dotnet NETJDC.dll --urls=http://*:5701 1>"$(pwd)"/log 2>&1 & #ARM64
+
 ```
 
 
@@ -259,5 +211,4 @@ docker start ark
 > ***您使用或者复制了本仓库且本人制作的任何脚本，则视为`已接受`此声明，请仔细阅读***
 
 ## 多谢
-
 
