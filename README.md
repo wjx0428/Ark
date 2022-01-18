@@ -186,7 +186,7 @@ sudo docker run   --name ark -p 5701:80 -p 5000:5000 -d  -v  "$(pwd)":/app/Ark \
 
 由于有定时任务 需要设置 时区 假设群辉拉的源码在 /volume1/docker/nvjdc 目录
 ```
-sudo docker run   --name ark -p 5701:80 -d  -v  /volume1/docker/nvjdc:/app \
+sudo docker run   --name ark  -p 5701:80 -p 5000:5000 -d  -v  /volume1/docker/nvjdc:/app \
 -it --privileged=true  nolanhzy/ark:latest
 ```
 进入容器
